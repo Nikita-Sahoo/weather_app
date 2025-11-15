@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Weather Forecast App</title>
+  <meta name="description" content="Weather Forecast Application - JavaScript, Tailwind CSS" />
+  <!-- Tailwind CDN (for assignment simplicity). For production use, install via npm/build pipeline -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-sky-100 min-h-screen flex items-center justify-center p-4">
+  <main id="app" class="max-w-3xl w-full bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6">
+    <header class="flex items-center justify-between mb-4">
+      <h1 class="text-2xl font-bold">Weather Forecast</h1>
+      <div class="flex items-center gap-2">
+        <label class="text-sm">Unit:</label>
+        <button id="unit-toggle" class="px-3 py-1 rounded-md border">°C</button>
+      </div>
+    </header>
+
+    <!-- Search area -->
+    <section class="mb-4">
+      <div class="flex gap-2">
+        <input id="city-input" type="text" placeholder="Enter city (e.g., Patna)" class="flex-1 p-2 border rounded-md" />
+        <button id="search-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md">Search</button>
+        <button id="geo-btn" class="px-4 py-2 bg-green-600 text-white rounded-md">Use My Location</button>
+      </div>
+      <div id="input-error" class="mt-2 text-sm text-red-600 hidden"></div>
+
+      <!-- Recently searched dropdown (hidden when empty) -->
+      <div class="mt-3">
+        <label class="text-sm block mb-1">Recently searched:</label>
+        <select id="recent-select" class="w-full p-2 border rounded-md hidden"></select>
+      </div>
+    </section>
+
+    <!-- Current weather card -->
+    <section id="current-card" class="mb-4 p-4 bg-white rounded-xl shadow-sm hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 id="location-name" class="text-xl font-semibold"></h2>
+          <div id="date-str" class="text-sm text-gray-600"></div>
+        </div>
+        <div class="text-right">
+          <div id="temp-main" class="text-4xl font-bold"></div>
+          <div id="weather-desc" class="text-sm text-gray-700"></div>
+        </div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-3 gap-2 text-sm">
+        <div class="flex items-center gap-2"><span>🌡️</span><span id="feels-like">—</span></div>
+        <div class="flex items-center gap-2"><span>💧</span><span id="humidity">—</span></div>
+        <div class="flex items-center gap-2"><span>💨</span><span id="wind">—</span></div>
+      </div>
+      <div id="alert-box" class="mt-3 p-2 rounded-md hidden text-sm"></div>
+    </section>
+
+    <!-- Extended forecast -->
+    <section>
+      <h3 class="font-semibold mb-2">5-day Forecast</h3>
+      <div id="forecast-grid" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+    </section>
+
+    <!-- API / error area -->
+    <div id="api-error" class="mt-4 text-red-600 hidden"></div>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

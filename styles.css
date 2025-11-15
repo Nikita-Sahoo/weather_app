@@ -1,0 +1,18 @@
+/* styles.css - small additions */
+body {
+  transition: background 0.6s ease;
+}
+
+/* dynamic backgrounds classes will be toggled by JS via document.body.classList */
+.bg-rainy {
+  background: linear-gradient(180deg, #4b6cb7 0%, #182848 100%);
+  color: white;
+}
+.bg-sunny {
+  background: linear-gradient(180deg, #fceabb 0%, #f8b500 100%);
+  color: black;
+}
+.bg-cloudy {
+  background: linear-gradient(180deg, #d7d2cc 0%, #304352 100%);
+  color: white;
+}
