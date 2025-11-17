@@ -14,82 +14,126 @@
     <source src="cloud_video.mp4" type="video/mp4">
   </video>
 
-  <!-- DARK OVERLAY FOR READABILITY -->
+  <!-- DARK OVERLAY -->
   <div class="fixed top-0 left-0 w-full h-full bg-black/50 -z-10"></div>
+  
 
-  <!-- MAIN CONTAINER -->
-  <div class="w-full max-w-6xl bg-white/20 backdrop-blur-md p-6 rounded-2xl shadow-2xl">
+  <!-- =============== MAIN CONTAINER =============== -->
+  <div class="w-full max-w-6xl bg-white/20 backdrop-blur-md p-6 rounded-2xl shadow-2xl mt-10">
 
     <!-- HEADER -->
     <h1 class="text-center text-3xl font-bold text-white py-3 rounded-lg bg-blue-700/70 mb-6 shadow-lg">
       Weather Dashboard
     </h1>
 
-    <!-- SEARCH + TODAY SECTION -->
+    <!-- LEFT (SEARCH) & RIGHT (TODAY WEATHER) LAYOUT -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
-      <!-- SEARCH PANEL -->
-      <div class="col-span-1 bg-white/30 backdrop-blur-lg p-5 rounded-xl shadow-md">
+      <!-- =============== LEFT: SEARCH PANEL =============== -->
+      <div class="bg-white/30 backdrop-blur-lg p-5 rounded-xl shadow-md">
         <label class="text-white font-medium mb-2 block">Enter a City Name</label>
         
-        <input id="cityInput" type="text" placeholder="E.g., New York, London, Tokyo"
+        <input type="text" placeholder="E.g., London, New York, Tokyo"
           class="w-full p-2 rounded-md text-gray-900 outline-none focus:ring-2 focus:ring-blue-400" />
         
-        <button id="searchBtn"
+        <button
           class="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
           Search
         </button>
 
         <p class="text-center text-white font-semibold my-2">OR</p>
 
-        <button id="currentBtn"
+        <button
           class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 rounded-lg transition">
           Use Current Location
         </button>
 
-        <!-- Recent Searches -->
-        <select id="recentCities" class="hidden bg-white text-gray-900 mt-3 py-2 rounded-lg w-full"></select>
+        <!-- Recent Searches Dropdown -->
+        <!-- <select class="bg-white text-gray-900 mt-3 py-2 rounded-lg w-full">
+          <option>London</option>
+          <option>Tokyo</option>
+          <option>New York</option>
+        </select> -->
       </div>
 
-      <!-- TODAY WEATHER CARD -->
-      <div id="weatherCard"
-        class="col-span-2 hidden bg-white/40 backdrop-blur-lg p-6 rounded-xl shadow-md text-white flex justify-between items-center transition-all">
-        
+      <!-- =============== RIGHT: TODAY WEATHER CARD =============== -->
+      <div class="col-span-2 bg-white/20 backdrop-blur-lg p-6 rounded-xl shadow-md text-white flex justify-between items-center">
+
         <div>
-          <h2 id="cityName" class="text-xl font-semibold"></h2>
-          <p id="date" class="text-sm opacity-90"></p>
+          <h2 class="text-xl font-semibold">London, United Kingdom</h2>
+          <p class="text-sm opacity-90">Tuesday, March 10, 2025</p>
 
-          <p id="temperature" class="text-4xl font-bold mt-2"></p>
-          <p id="condition" class="font-medium"></p>
-          <p id="humidity"></p>
-          <p id="wind"></p>
+          <p class="text-4xl font-bold mt-2">16°C</p>
+          <p class="font-medium">Light Rain</p>
+          <p>Humidity: 78%</p>
+          <p>Wind Speed: 11 km/h</p>
 
-          <!-- Temp Unit Switch -->
-          <button id="toggleTemp" 
-            class="mt-3 bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded-lg text-sm font-semibold">
-            Switch °C/°F
-          </button>
-
-          <!-- ALERT MSG -->
-          <p id="alertMsg" class="font-bold text-red-600 mt-2"></p>
+          <p class="font-bold text-yellow-300 mt-2">Wear a Raincoat!</p>
         </div>
 
-        <!-- Weather Icon -->
-        <img id="weatherIcon" class="w-24 drop-shadow-xl" />
+        <img src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png" class="w-24 drop-shadow-xl" />
       </div>
     </div>
 
-    <!-- 5 DAY FORECAST TITLE -->
-    <h2 class="text-xl font-semibold text-white mb-3">5-Day Forecast</h2>
+    <!-- FORECAST TITLE -->
+    <h2 class="text-xl font-semibold text-white mt-6 mb-3">5-Day Forecast</h2>
 
-    <!-- FORECAST BOX -->
-    <div id="forecast" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4"></div>
+    <!-- FORECAST GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
 
-    <!-- ERROR MSG -->
-    <p id="errorMsg" class="mt-4 text-red-300 text-lg font-semibold"></p>
+      <!-- DAY 1 -->
+      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
+        <h3 class="font-semibold text-lg">March 11</h3>
+        <img src="https://cdn-icons-png.flaticon.com/512/414/414825.png" class="w-16 mx-auto">
+        <p class="text-xl font-bold mt-2">18°C</p>
+        <p>Cloudy</p>
+        <p>Humidity: 72%</p>
+        <p>Wind: 10 km/h</p>
+      </div>
+
+      <!-- DAY 2 -->
+      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
+        <h3 class="font-semibold text-lg">March 12</h3>
+        <img src="https://cdn-icons-png.flaticon.com/512/3209/3209954.png" class="w-16 mx-auto">
+        <p class="text-xl font-bold mt-2">17°C</p>
+        <p>Rain</p>
+        <p>Humidity: 82%</p>
+        <p>Wind: 13 km/h</p>
+      </div>
+
+      <!-- DAY 3 -->
+      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
+        <h3 class="font-semibold text-lg">March 13</h3>
+        <img src="https://cdn-icons-png.flaticon.com/512/4150/4150904.png" class="w-16 mx-auto">
+        <p class="text-xl font-bold mt-2">20°C</p>
+        <p>Sunny</p>
+        <p>Humidity: 60%</p>
+        <p>Wind: 8 km/h</p>
+      </div>
+
+      <!-- DAY 4 -->
+      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
+        <h3 class="font-semibold text-lg">March 14</h3>
+        <img src="https://cdn-icons-png.flaticon.com/512/1146/1146858.png" class="w-16 mx-auto">
+        <p class="text-xl font-bold mt-2">19°C</p>
+        <p>Partly Cloudy</p>
+        <p>Humidity: 68%</p>
+        <p>Wind: 9 km/h</p>
+      </div>
+
+      <!-- DAY 5 -->
+      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
+        <h3 class="font-semibold text-lg">March 15</h3>
+        <img src="https://cdn-icons-png.flaticon.com/512/1779/1779807.png" class="w-16 mx-auto">
+        <p class="text-xl font-bold mt-2">15°C</p>
+        <p>Light Rain</p>
+        <p>Humidity: 80%</p>
+        <p>Wind: 12 km/h</p>
+      </div>
+
+    </div>
 
   </div>
 
-  <script src="script.js"></script>
 </body>
 </html>
