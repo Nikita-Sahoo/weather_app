@@ -24,6 +24,7 @@ const elements = {
     fahrenheitBtn: document.getElementById('fahrenheitBtn')
 };
 
+// Initialize application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🌤️ WeatherCast Pro Initialized');
     setupEventListeners();
@@ -77,7 +78,6 @@ function setupEventListeners() {
         }
     });
 }
-
 
 // Search functionality
 async function handleSearch() {
@@ -137,49 +137,6 @@ async function fetchWeatherData(city) {
         showError(error.message);
     }
 }
-
-// Fetch weather data by city name
-async function fetchWeatherData(city) {
-    showLoading(`Searching for ${city}...`);
-    
-    try {
-        const currentResponse = await fetch(
-            `${BASE_URL}/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
-        );
-        
-        if (!currentResponse.ok) {
-            if (currentResponse.status === 404) {
-                throw new Error('City not found. Please check the spelling.');
-            } else if (currentResponse.status === 401) {
-                throw new Error('Invalid API key. Please check your configuration.');
-            } else {
-                throw new Error('Weather service unavailable. Please try again later.');
-            }
-        }
-        
-        const currentData = await currentResponse.json();
-        
-        const forecastResponse = await fetch(
-            `${BASE_URL}/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
-        );
-        
-        if (!forecastResponse.ok) {
-            throw new Error('Could not fetch forecast data.');
-        }
-        
-        const forecastData = await forecastResponse.json();
-        
-        currentWeatherData = { current: currentData, forecast: forecastData };
-        displayWeatherData(currentWeatherData);
-        addToRecentCities(city);
-        hideLoading();
-        
-    } catch (error) {
-        hideLoading();
-        showError(error.message);
-    }
-}
-
 
 // Get current location weather (used on page load and button click)
 function getCurrentLocationWeather() {
@@ -373,11 +330,6 @@ function loadRecentCities() {
     return JSON.parse(localStorage.getItem('recentCities') || '[]');
 }
 
-// Recent cities functionality
-function loadRecentCities() {
-    return JSON.parse(localStorage.getItem('recentCities') || '[]');
-}
-
 function saveRecentCities(cities) {
     localStorage.setItem('recentCities', JSON.stringify(cities));
 }
@@ -464,7 +416,6 @@ function updateTemperatureDisplay(tempCelsius) {
 function celsiusToFahrenheit(celsius) {
     return (celsius * 9/5) + 32;
 }
-
 
 // Weather alerts
 function checkWeatherAlerts(tempCelsius) {
