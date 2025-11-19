@@ -24,6 +24,61 @@ const elements = {
     fahrenheitBtn: document.getElementById('fahrenheitBtn')
 };
 
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🌤️ WeatherCast Pro Initialized');
+    setupEventListeners();
+    loadRecentCities();
+    
+    // Automatically get current location weather on page load
+    setTimeout(() => {
+        getCurrentLocationWeather();
+    }, 500); // Small delay to ensure everything is loaded
+});
+
+// Event Listeners
+function setupEventListeners() {
+    // Prevent form submission and page reload
+    elements.searchBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        handleSearch();
+    });
+    
+    elements.locationBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        getCurrentLocationWeather();
+    });
+    
+    elements.cityInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearch();
+        }
+    });
+    
+    elements.cityInput.addEventListener('input', handleInputChange);
+    elements.cityInput.addEventListener('focus', showRecentCities);
+    
+    elements.celsiusBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTemperatureUnit('celsius');
+    });
+    
+    elements.fahrenheitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTemperatureUnit('fahrenheit');
+    });
+    
+    document.getElementById('closeError').addEventListener('click', hideError);
+    document.getElementById('confirmError').addEventListener('click', hideError);
+    
+    document.addEventListener('click', (e) => {
+        if (!elements.cityInput.contains(e.target) && !elements.recentCities.contains(e.target)) {
+            elements.recentCities.classList.add('hidden');
+        }
+    });
+}
+
+
 // Search functionality
 async function handleSearch() {
     const city = elements.cityInput.value.trim();
@@ -82,6 +137,49 @@ async function fetchWeatherData(city) {
         showError(error.message);
     }
 }
+
+// Fetch weather data by city name
+async function fetchWeatherData(city) {
+    showLoading(`Searching for ${city}...`);
+    
+    try {
+        const currentResponse = await fetch(
+            `${BASE_URL}/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
+        );
+        
+        if (!currentResponse.ok) {
+            if (currentResponse.status === 404) {
+                throw new Error('City not found. Please check the spelling.');
+            } else if (currentResponse.status === 401) {
+                throw new Error('Invalid API key. Please check your configuration.');
+            } else {
+                throw new Error('Weather service unavailable. Please try again later.');
+            }
+        }
+        
+        const currentData = await currentResponse.json();
+        
+        const forecastResponse = await fetch(
+            `${BASE_URL}/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
+        );
+        
+        if (!forecastResponse.ok) {
+            throw new Error('Could not fetch forecast data.');
+        }
+        
+        const forecastData = await forecastResponse.json();
+        
+        currentWeatherData = { current: currentData, forecast: forecastData };
+        displayWeatherData(currentWeatherData);
+        addToRecentCities(city);
+        hideLoading();
+        
+    } catch (error) {
+        hideLoading();
+        showError(error.message);
+    }
+}
+
 
 // Get current location weather (used on page load and button click)
 function getCurrentLocationWeather() {
@@ -197,4 +295,51 @@ function displayWeatherData(data) {
         elements.extendedForecast.classList.remove('hidden');
         elements.currentWeather.classList.add('fade-in');
     }, 100);
+}
+
+// Display current weather
+function displayCurrentWeather(data) {
+    document.getElementById('cityName').textContent = `${data.name}, ${data.sys.country}`;
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    
+    document.getElementById('weatherDescription').textContent = data.weather[0].description;
+    updateTemperatureDisplay(data.main.temp);
+    document.getElementById('windSpeed').textContent = data.wind.speed;
+    document.getElementById('humidity').textContent = data.main.humidity;
+    document.getElementById('pressure').textContent = data.main.pressure;
+    
+    const feelsLikeTemp = currentUnit === 'celsius' ? 
+        data.main.feels_like : 
+        celsiusToFahrenheit(data.main.feels_like);
+    document.getElementById('feelsLike').textContent = Math.round(feelsLikeTemp);
+    
+    const icon = getWeatherIcon(data.weather[0].main, data.weather[0].description);
+    document.getElementById('weatherIcon').textContent = icon;
+    
+    checkWeatherAlerts(data.main.temp);
+}
+
+// Display extended forecast
+function displayExtendedForecast(data) {
+    const forecastContainer = elements.extendedForecast;
+    forecastContainer.innerHTML = '';
+    
+    const dailyForecasts = [];
+    const processedDays = new Set();
+    
+    data.list.forEach(item => {
+        const date = new Date(item.dt * 1000).toDateString();
+        if (!processedDays.has(date) && dailyForecasts.length < 5) {
+            processedDays.add(date);
+            dailyForecasts.push(item);
+        }
+    });
+    
+    dailyForecasts.forEach((forecast, index) => {
+        const date = new Date(forecast.dt * 1000);
+        const card = createForecastCard(forecast, date, index);
+        forecastContainer.appendChild(card);
+    });
 }
