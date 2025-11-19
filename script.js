@@ -343,3 +343,4 @@ function displayExtendedForecast(data) {
         forecastContainer.appendChild(card);
     });
 }
+
