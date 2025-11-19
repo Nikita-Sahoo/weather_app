@@ -372,3 +372,41 @@ function createForecastCard(forecast, date, index) {
 function loadRecentCities() {
     return JSON.parse(localStorage.getItem('recentCities') || '[]');
 }
+
+// Recent cities functionality
+function loadRecentCities() {
+    return JSON.parse(localStorage.getItem('recentCities') || '[]');
+}
+
+function saveRecentCities(cities) {
+    localStorage.setItem('recentCities', JSON.stringify(cities));
+}
+
+function addToRecentCities(city) {
+    let recent = loadRecentCities();
+    recent = recent.filter(c => c.toLowerCase() !== city.toLowerCase());
+    recent.unshift(city);
+    if (recent.length > 5) recent = recent.slice(0, 5);
+    saveRecentCities(recent);
+    updateRecentCitiesDropdown(recent);
+}
+
+function updateRecentCitiesDropdown(cities) {
+    elements.recentCities.innerHTML = '';
+    if (cities.length === 0) {
+        elements.recentCities.classList.add('hidden');
+        return;
+    }
+    
+    cities.forEach(city => {
+        const cityElement = document.createElement('div');
+        cityElement.className = 'px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0 text-gray-800';
+        cityElement.textContent = city;
+        cityElement.addEventListener('click', () => {
+            elements.cityInput.value = city;
+            elements.recentCities.classList.add('hidden');
+            handleSearch();
+        });
+        elements.recentCities.appendChild(cityElement);
+    });
+}
