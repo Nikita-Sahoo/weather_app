@@ -1,0 +1,219 @@
+/* Custom styles for weather backgrounds and animations */
+.weather-card {
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.weather-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.forecast-card {
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.forecast-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+/* Animation for weather icons */
+.weather-icon {
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Custom scrollbar for recent cities dropdown */
+#recentCities::-webkit-scrollbar {
+    width: 6px;
+}
+
+#recentCities::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 0 0 8px 8px;
+}
+
+#recentCities::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#recentCities::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Dynamic weather backgrounds */
+.weather-bg-sunny {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.weather-bg-cloudy {
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+}
+
+.weather-bg-rainy {
+    background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+}
+
+.weather-bg-snowy {
+    background: linear-gradient(135deg, #e6e9f0 0%, #eef1f5 100%);
+}
+
+.weather-bg-stormy {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.weather-bg-clear {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.weather-bg-default {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Loading animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Fade in animation for cards */
+.fade-in {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Pulse animation for loading */
+.pulse-soft {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Glass morphism effect */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Custom button hover effects */
+.btn-hover {
+    transition: all 0.3s ease;
+}
+
+.btn-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+    .weather-icon {
+        font-size: 4rem !important;
+    }
+    
+    #currentTemp {
+        font-size: 3rem !important;
+    }
+    
+    .grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .weather-icon {
+        font-size: 3rem !important;
+    }
+    
+    #currentTemp {
+        font-size: 2.5rem !important;
+    }
+    
+    .grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .main-container {
+        margin-top: 1rem !important;
+        padding: 1rem !important;
+    }
+}
+
+/* Text shadow for better readability */
+.text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Custom border radius */
+.rounded-glass {
+    border-radius: 20px;
+}
+
+/* Smooth transitions for all interactive elements */
+button, input, .weather-card, .forecast-card {
+    transition: all 0.3s ease;
+}
+
+/* Focus states for accessibility */
+input:focus {
+    outline: none;
+    ring: 2px;
+    ring-color: rgba(59, 130, 246, 0.5);
+}
+
+button:focus {
+    outline: 2px solid rgba(59, 130, 246, 0.5);
+    outline-offset: 2px;
+}
+
+/* Custom shadow depths */
+.shadow-deep {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-medium {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}

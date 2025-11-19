@@ -1,139 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weather Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherCast </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+<body class="text-white relative min-h-screen flex justify-center p-4 overflow-x-hidden weather-bg-default transition-all duration-1000">
 
-<body class="text-white relative min-h-screen flex justify-center p-4 overflow-x-hidden">
+    <!-- CLOUD VIDEO BACKGROUND -->
+    <video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover -z-10">
+        <source src="cloud_video.mp4" type="video/mp4">
+    </video>
 
-  <!-- CLOUD VIDEO BACKGROUND -->
-  <video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover -z-10">
-    <source src="cloud_video.mp4" type="video/mp4">
-  </video>
+    <!-- DARK OVERLAY -->
+    <div class="fixed top-0 left-0 w-full h-full bg-black/50 -z-10"></div>
+    
+    <!-- Error Modal -->
+    <div id="errorModal" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 max-w-md mx-4 text-gray-800">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-red-600">Error</h3>
+                <button id="closeError" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p id="errorMessage" class="text-gray-700 mb-4"></p>
+            <button id="confirmError" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full">
+                OK
+            </button>
+        </div>
+    </div>
 
-  <!-- DARK OVERLAY -->
-  <div class="fixed top-0 left-0 w-full h-full bg-black/50 -z-10"></div>
-  
+    <!-- =============== MAIN CONTAINER =============== -->
+    <div class="w-full max-w-6xl bg-white/20 backdrop-blur-md p-6 rounded-2xl shadow-2xl mt-10">
 
-  <!-- =============== MAIN CONTAINER =============== -->
-  <div class="w-full max-w-6xl bg-white/20 backdrop-blur-md p-6 rounded-2xl shadow-2xl mt-10">
+        <!-- HEADER -->
+        <h1 class="text-center text-3xl font-bold text-white py-3 rounded-lg bg-blue-700/70 mb-6 shadow-lg">
+            <i class="fas fa-cloud-sun mr-3"></i>WeatherCast
+        </h1>
 
-    <!-- HEADER -->
-    <h1 class="text-center text-3xl font-bold text-white py-3 rounded-lg bg-blue-700/70 mb-6 shadow-lg">
-      Weather Dashboard
-    </h1>
+        <!-- LEFT (SEARCH) & RIGHT (TODAY WEATHER) LAYOUT -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 
-    <!-- LEFT (SEARCH) & RIGHT (TODAY WEATHER) LAYOUT -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <!-- =============== LEFT: SEARCH PANEL =============== -->
+            <div class="bg-white/30 backdrop-blur-lg p-5 rounded-xl shadow-md">
+                <label class="text-white font-medium mb-2 block">
+                    <i class="fas fa-search mr-2"></i>Enter a City Name
+                </label>
+                
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="cityInput"
+                        placeholder="E.g., London, New York, Tokyo"
+                        class="w-full p-3 rounded-md text-gray-900 outline-none focus:ring-2 focus:ring-blue-400 border border-gray-300"
+                    >
+                    <!-- Recent Cities Dropdown -->
+                    <div id="recentCities" class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg mt-1 shadow-lg hidden z-10 max-h-40 overflow-y-auto">
+                        <!-- Recent cities will be populated here -->
+                    </div>
+                </div>
+                
+                <button 
+                    id="searchBtn"
+                    class="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition transform hover:scale-105"
+                >
+                    <i class="fas fa-search mr-2"></i>
+                    Search
+                </button>
 
-      <!-- =============== LEFT: SEARCH PANEL =============== -->
-      <div class="bg-white/30 backdrop-blur-lg p-5 rounded-xl shadow-md">
-        <label class="text-white font-medium mb-2 block">Enter a City Name</label>
-        
-        <input type="text" placeholder="E.g., London, New York, Tokyo"
-          class="w-full p-2 rounded-md text-gray-900 outline-none focus:ring-2 focus:ring-blue-400" />
-        
-        <button
-          class="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
-          Search
-        </button>
+                <p class="text-center text-white font-semibold my-3">OR</p>
 
-        <p class="text-center text-white font-semibold my-2">OR</p>
+                <button id="locationBtn"
+                    class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 rounded-lg transition transform hover:scale-105 flex items-center justify-center"
+                >
+                    <i class="fas fa-location-arrow mr-2"></i>
+                    Current Location
+                </button>
 
-        <button
-          class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 rounded-lg transition">
-          Use Current Location
-        </button>
+                
+                <!-- Location Status -->
+                <div id="locationStatus" class="mt-3 text-sm text-white/80 hidden">
+                    <div class="flex items-center bg-black/20 p-2 rounded-lg">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                        <span id="locationStatusText"></span>
+                    </div>
+                </div>
 
-        <!-- Recent Searches Dropdown -->
-        <!-- <select class="bg-white text-gray-900 mt-3 py-2 rounded-lg w-full">
-          <option>London</option>
-          <option>Tokyo</option>
-          <option>New York</option>
-        </select> -->
-      </div>
+                <!-- Unit Toggle -->
+                <div class="mt-6">
+                    <!-- <label class="block text-white font-semibold mb-3 text-center">
+                        <i class="fas fa-thermometer-half mr-2"></i>Temperature Unit
+                    </label> -->
+                    <div class="bg-white/30 rounded-lg p-1 flex">
+                        <button 
+                            id="celsiusBtn"
+                            class="flex-1 py-2 rounded-lg bg-blue-600 text-white transition-colors font-semibold"
+                        >
+                            °C Celsius
+                        </button>
+                        <button 
+                            id="fahrenheitBtn"
+                            class="flex-1 py-2 rounded-lg text-white hover:bg-white/20 transition-colors font-semibold"
+                        >
+                            °F Fahrenheit
+                        </button>
+                    </div>
+                </div>
 
-      <!-- =============== RIGHT: TODAY WEATHER CARD =============== -->
-      <div class="col-span-2 bg-white/20 backdrop-blur-lg p-6 rounded-xl shadow-md text-white flex justify-between items-center">
+                <!-- App Info -->
+                <!-- <div class="mt-6 p-3 bg-black/20 rounded-lg">
+                    <p class="text-white/70 text-sm text-center">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Data provided by OpenWeatherMap
+                    </p>
+                </div> -->
+            </div>
 
-        <div>
-          <h2 class="text-xl font-semibold">London, United Kingdom</h2>
-          <p class="text-sm opacity-90">Tuesday, March 10, 2025</p>
 
-          <p class="text-4xl font-bold mt-2">16°C</p>
-          <p class="font-medium">Light Rain</p>
-          <p>Humidity: 78%</p>
-          <p>Wind Speed: 11 km/h</p>
+            <!-- =============== RIGHT: TODAY WEATHER CARD =============== -->
+            <div id="currentWeather" class="col-span-2 bg-white/20 backdrop-blur-lg p-6 rounded-xl shadow-md text-white hidden weather-card">
+                <div class="flex flex-col md:flex-row justify-between items-start">
+                    <div class="flex-1">
+                        <div class="mb-4">
+                            <h2 class="text-3xl font-bold" id="cityName">--</h2>
+                            <p class="text-lg opacity-90" id="currentDate">--</p>
+                        </div>
 
-          <p class="font-bold text-yellow-300 mt-2">Wear a Raincoat!</p>
+                        <div class="flex items-center gap-6 mb-6">
+                            <div class="text-7xl weather-icon" id="weatherIcon">
+                                <!-- Weather icon will be inserted here -->
+                            </div>
+                            <div>
+                                <p class="text-6xl font-bold mb-2" id="currentTemp">
+                                    <span id="tempValue">--</span>
+                                    <span class="text-4xl">
+                                        <span id="tempUnit">°C</span>
+                                    </span>
+                                </p>
+                                <p class="text-xl font-medium capitalize" id="weatherDescription">--</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white/10 rounded-lg p-3 text-center">
+                                <i class="fas fa-wind text-xl mb-2"></i>
+                                <p class="font-semibold"><span id="windSpeed">--</span> m/s</p>
+                                <p class="text-sm opacity-80">Wind Speed</p>
+                            </div>
+                            <div class="bg-white/10 rounded-lg p-3 text-center">
+                                <i class="fas fa-tint text-xl mb-2"></i>
+                                <p class="font-semibold"><span id="humidity">--</span>%</p>
+                                <p class="text-sm opacity-80">Humidity</p>
+                            </div>
+                            <div class="bg-white/10 rounded-lg p-3 text-center">
+                                <i class="fas fa-temperature-low text-xl mb-2"></i>
+                                <p class="font-semibold"><span id="feelsLike">--</span>°</p>
+                                <p class="text-sm opacity-80">Feels Like</p>
+                            </div>
+                            <div class="bg-white/10 rounded-lg p-3 text-center">
+                                <i class="fas fa-compress-alt text-xl mb-2"></i>
+                                <p class="font-semibold"><span id="pressure">--</span> hPa</p>
+                                <p class="text-sm opacity-80">Pressure</p>
+                            </div>
+                        </div>
+
+                        <!-- Weather Alert -->
+                        <div id="weatherAlert" class="hidden mt-6 p-4 rounded-lg border-l-4 bg-yellow-500/30 border-yellow-500">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-exclamation-triangle text-xl text-yellow-500"></i>
+                                <div>
+                                    <p id="alertMessage" class="font-semibold"></p>
+                                    <p class="text-sm opacity-80 mt-1">Please take necessary precautions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <img src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png" class="w-24 drop-shadow-xl" />
-      </div>
-    </div>
+        <!-- FORECAST TITLE -->
+        <h2 class="text-2xl font-semibold text-white mt-8 mb-4 flex items-center">
+            <i class="fas fa-calendar-alt mr-3"></i>5-Day Forecast
+        </h2>
 
-    <!-- FORECAST TITLE -->
-    <h2 class="text-xl font-semibold text-white mt-6 mb-3">5-Day Forecast</h2>
-
-    <!-- FORECAST GRID -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-
-      <!-- DAY 1 -->
-      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
-        <h3 class="font-semibold text-lg">March 11</h3>
-        <img src="https://cdn-icons-png.flaticon.com/512/414/414825.png" class="w-16 mx-auto">
-        <p class="text-xl font-bold mt-2">18°C</p>
-        <p>Cloudy</p>
-        <p>Humidity: 72%</p>
-        <p>Wind: 10 km/h</p>
-      </div>
-
-      <!-- DAY 2 -->
-      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
-        <h3 class="font-semibold text-lg">March 12</h3>
-        <img src="https://cdn-icons-png.flaticon.com/512/3209/3209954.png" class="w-16 mx-auto">
-        <p class="text-xl font-bold mt-2">17°C</p>
-        <p>Rain</p>
-        <p>Humidity: 82%</p>
-        <p>Wind: 13 km/h</p>
-      </div>
-
-      <!-- DAY 3 -->
-      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
-        <h3 class="font-semibold text-lg">March 13</h3>
-        <img src="https://cdn-icons-png.flaticon.com/512/4150/4150904.png" class="w-16 mx-auto">
-        <p class="text-xl font-bold mt-2">20°C</p>
-        <p>Sunny</p>
-        <p>Humidity: 60%</p>
-        <p>Wind: 8 km/h</p>
-      </div>
-
-      <!-- DAY 4 -->
-      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
-        <h3 class="font-semibold text-lg">March 14</h3>
-        <img src="https://cdn-icons-png.flaticon.com/512/1146/1146858.png" class="w-16 mx-auto">
-        <p class="text-xl font-bold mt-2">19°C</p>
-        <p>Partly Cloudy</p>
-        <p>Humidity: 68%</p>
-        <p>Wind: 9 km/h</p>
-      </div>
-
-      <!-- DAY 5 -->
-      <div class="bg-white/30 backdrop-blur-md p-4 rounded-xl text-center">
-        <h3 class="font-semibold text-lg">March 15</h3>
-        <img src="https://cdn-icons-png.flaticon.com/512/1779/1779807.png" class="w-16 mx-auto">
-        <p class="text-xl font-bold mt-2">15°C</p>
-        <p>Light Rain</p>
-        <p>Humidity: 80%</p>
-        <p>Wind: 12 km/h</p>
-      </div>
+        <!-- FORECAST GRID -->
+        <div id="extendedForecast" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 hidden">
+            <!-- Forecast cards will be populated here -->
+        </div>
 
     </div>
 
-  </div>
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="fixed inset-0 bg-black bg-opacity-70 hidden z-40 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg flex items-center gap-4 text-gray-800 shadow-2xl">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+            <div>
+                <p class="font-semibold">Loading Weather Data</p>
+                <p class="text-sm text-gray-600" id="loadingText">Please wait...</p>
+            </div>
+        </div>
+    </div>
 
+    <!-- Load config and script -->
+    <script src="config.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
+
+
