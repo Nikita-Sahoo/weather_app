@@ -98,7 +98,23 @@ function getCurrentLocationWeather() {
         showLoading('Getting your current location...');
     }
     
-    
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const { latitude, longitude } = position.coords;
+            await fetchWeatherByCoords(latitude, longitude);
+            isFirstLoad = false;
+        },
+        (error) => {
+            hideLoading();
+            handleGeolocationError(error);
+            isFirstLoad = false;
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 600000 // 10 minutes cache
+        }
+    );
 }
 
 // Handle geolocation errors
@@ -138,7 +154,30 @@ async function fetchWeatherByCoords(lat, lon) {
     showLoading('Fetching weather data...');
     
     try {
+        const currentResponse = await fetch(
+            `${BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+        );
         
+        if (!currentResponse.ok) {
+            throw new Error('Could not fetch weather data for your location.');
+        }
+        
+        const currentData = await currentResponse.json();
+        
+        const forecastResponse = await fetch(
+            `${BASE_URL}/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+        );
+        
+        if (!forecastResponse.ok) {
+            throw new Error('Could not fetch forecast data for your location.');
+        }
+        
+        const forecastData = await forecastResponse.json();
+        
+        currentWeatherData = { current: currentData, forecast: forecastData };
+        displayWeatherData(currentWeatherData);
+        addToRecentCities(currentData.name);
+        hideLoading();
         
     } catch (error) {
         hideLoading();
