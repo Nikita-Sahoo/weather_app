@@ -124,4 +124,4 @@ Current server: ${this.SERVER_URL}
 }
 
 // Create global instance
-const weatherConfig = new WeatherConfig();
+const weatherConfig = new WeatherConfig(); 
