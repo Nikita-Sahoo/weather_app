@@ -410,3 +410,57 @@ function updateRecentCitiesDropdown(cities) {
         elements.recentCities.appendChild(cityElement);
     });
 }
+
+function handleInputChange() {
+    const recent = loadRecentCities();
+    const filtered = recent.filter(city => 
+        city.toLowerCase().includes(elements.cityInput.value.toLowerCase())
+    );
+    
+    if (filtered.length > 0 && elements.cityInput.value) {
+        updateRecentCitiesDropdown(filtered);
+    } else {
+        elements.recentCities.classList.add('hidden');
+    }
+}
+
+function showRecentCities() {
+    const recent = loadRecentCities();
+    if (recent.length > 0) {
+        updateRecentCitiesDropdown(recent);
+        elements.recentCities.classList.remove('hidden');
+    }
+}
+
+// Temperature unit conversion
+function switchTemperatureUnit(unit) {
+    if (unit === currentUnit) return;
+    currentUnit = unit;
+    
+    if (unit === 'celsius') {
+        elements.celsiusBtn.className = 'flex-1 py-2 rounded-lg bg-blue-600 text-white transition-colors font-semibold';
+        elements.fahrenheitBtn.className = 'flex-1 py-2 rounded-lg text-white hover:bg-white/20 transition-colors font-semibold';
+    } else {
+        elements.celsiusBtn.className = 'flex-1 py-2 rounded-lg text-white hover:bg-white/20 transition-colors font-semibold';
+        elements.fahrenheitBtn.className = 'flex-1 py-2 rounded-lg bg-blue-600 text-white transition-colors font-semibold';
+    }
+    
+    if (currentWeatherData) {
+        updateTemperatureDisplay(currentWeatherData.current.main.temp);
+        const feelsLikeTemp = unit === 'celsius' ? 
+            currentWeatherData.current.main.feels_like : 
+            celsiusToFahrenheit(currentWeatherData.current.main.feels_like);
+        document.getElementById('feelsLike').textContent = Math.round(feelsLikeTemp);
+        displayExtendedForecast(currentWeatherData.forecast);
+    }
+}
+
+function updateTemperatureDisplay(tempCelsius) {
+    const temp = currentUnit === 'celsius' ? tempCelsius : celsiusToFahrenheit(tempCelsius);
+    document.getElementById('tempValue').textContent = Math.round(temp);
+    document.getElementById('tempUnit').textContent = `°${currentUnit === 'celsius' ? 'C' : 'F'}`;
+}
+
+function celsiusToFahrenheit(celsius) {
+    return (celsius * 9/5) + 32;
+}
