@@ -464,3 +464,51 @@ function updateTemperatureDisplay(tempCelsius) {
 function celsiusToFahrenheit(celsius) {
     return (celsius * 9/5) + 32;
 }
+
+
+// Weather alerts
+function checkWeatherAlerts(tempCelsius) {
+    const alertElement = document.getElementById('weatherAlert');
+    let alertText = '';
+    
+    if (tempCelsius > 40) alertText = '🌡️ Extreme heat warning! Temperature above 40°C';
+    else if (tempCelsius > 35) alertText = '🔥 High temperature alert! Stay hydrated';
+    else if (tempCelsius < 0) alertText = '🥶 Freezing temperatures! Dress warmly';
+    
+    if (alertText) {
+        document.getElementById('alertMessage').textContent = alertText;
+        alertElement.classList.remove('hidden');
+    } else {
+        alertElement.classList.add('hidden');
+    }
+}
+
+// Weather icons
+function getWeatherIcon(weatherMain, description = '') {
+    const icons = {
+        Clear: '☀️',
+        Clouds: description.includes('few') ? '🌤️' : '☁️',
+        Rain: description.includes('light') ? '🌦️' : '🌧️',
+        Drizzle: '🌦️',
+        Thunderstorm: '⛈️',
+        Snow: '❄️',
+        Mist: '🌫️',
+        Fog: '🌫️'
+    };
+    return icons[weatherMain] || '🌈';
+}
+
+// Update background based on weather
+function updateWeatherBackground(weatherCondition) {
+    const body = document.body;
+    body.className = 'text-white relative min-h-screen flex justify-center p-4 overflow-x-hidden transition-all duration-1000';
+    
+    switch(weatherCondition.toLowerCase()) {
+        case 'clear': body.classList.add('weather-bg-clear'); break;
+        case 'clouds': body.classList.add('weather-bg-cloudy'); break;
+        case 'rain': case 'drizzle': body.classList.add('weather-bg-rainy'); break;
+        case 'snow': body.classList.add('weather-bg-snowy'); break;
+        case 'thunderstorm': body.classList.add('weather-bg-stormy'); break;
+        default: body.classList.add('weather-bg-default');
+    }
+}
