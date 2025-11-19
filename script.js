@@ -512,3 +512,25 @@ function updateWeatherBackground(weatherCondition) {
         default: body.classList.add('weather-bg-default');
     }
 }
+
+// Utility functions
+function showLoading(message = 'Loading weather data...') {
+    document.getElementById('loadingText').textContent = message;
+    elements.loadingSpinner.classList.remove('hidden');
+}
+
+function hideLoading() {
+    elements.loadingSpinner.classList.add('hidden');
+}
+
+function showError(message) {
+    elements.errorMessage.textContent = message;
+    elements.errorModal.classList.remove('hidden');
+}
+
+function hideError() {
+    elements.errorModal.classList.add('hidden');
+}
+
+// Initialize recent cities dropdown
+updateRecentCitiesDropdown(loadRecentCities());
