@@ -344,3 +344,31 @@ function displayExtendedForecast(data) {
     });
 }
 
+// Create forecast card
+function createForecastCard(forecast, date, index) {
+    const card = document.createElement('div');
+    card.className = 'forecast-card bg-white/20 backdrop-blur-md p-4 rounded-xl text-center fade-in';
+    card.style.animationDelay = `${index * 0.1}s`;
+    
+    const temp = currentUnit === 'celsius' ? forecast.main.temp : celsiusToFahrenheit(forecast.main.temp);
+    const icon = getWeatherIcon(forecast.weather[0].main, forecast.weather[0].description);
+    
+    card.innerHTML = `
+        <h3 class="font-bold text-white">${date.toLocaleDateString('en-US', { weekday: 'short' })}</h3>
+        <p class="text-white/70 text-sm mb-2">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+        <div class="text-4xl my-3 weather-icon">${icon}</div>
+        <p class="text-xl font-bold text-white mb-1">${Math.round(temp)}°${currentUnit === 'celsius' ? 'C' : 'F'}</p>
+        <p class="text-white/90 capitalize text-sm mb-3">${forecast.weather[0].description}</p>
+        <div class="flex justify-between text-xs text-white/80">
+            <span><i class="fas fa-tint mr-1"></i>${forecast.main.humidity}%</span>
+            <span><i class="fas fa-wind mr-1"></i>${forecast.wind.speed} m/s</span>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Recent cities functionality
+function loadRecentCities() {
+    return JSON.parse(localStorage.getItem('recentCities') || '[]');
+}
